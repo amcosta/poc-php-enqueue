@@ -1,15 +1,25 @@
 version: '2.2'
 services:
-  
+
+  php:
+    build:
+      context: .
+      args:
+        COMPOSER_AUTH: ${COMPOSER_AUTH}
+    container_name: poc-enqueue-php
+    volumes:
+      - .:/var/www/poc-enqueue
+    tty: true
+
   zookeeper:
     image: wurstmeister/zookeeper:latest
-    container_name: zookeeper
+    container_name: poc-enqueue-zookeeper
     ports:
       - "2181:2181"
 
   kafka-manager:
     image: hlebalbau/kafka-manager
-    container_name: kafka-manager
+    container_name: poc-enqueue-kafka-manager
     ports:
       - "9000:9000"
     environment:
@@ -18,73 +28,31 @@ services:
 
   kafka1:
     image: wurstmeister/kafka:latest
-    container_name: kafka1
+    container_name: poc-enqueue-kafka1
     ports:
       - "9092:9092"
       - "1099:1099"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME:  10.11.56.199
+      KAFKA_ADVERTISED_HOST_NAME:  10.11.57.2
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_BROKER_ID: 1
       KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote.rmi.port=1099"
       JMX_PORT: 1099
-    volumes:
-      - /Users/thiagovulcao/docker/compose/kafka/data/docker.sock:/var/run/docker.sock
+#    volumes:
+#      - /Users/thiagovulcao/docker/compose/kafka/data/docker.sock:/var/run/docker.sock
 
   kafka2:
     image: wurstmeister/kafka:latest
-    container_name: kafka2
+    container_name: poc-enqueue-kafka2
     ports:
       - "9098:9098"
       - "1100:1100"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME:  10.11.56.199
+      KAFKA_ADVERTISED_HOST_NAME:  10.11.57.2
       KAFKA_PORT: 9098
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_BROKER_ID: 2
       KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote.rmi.port=1100"
       JMX_PORT: 1100
-    volumes:
-      - /Users/thiagovulcao/docker/compose/kafka/data/docker.sock:/var/run/docker.sock
-
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null
-    volumes:
-      - /Users/thiagovulcao/docker/compose/mongodb/data/docker.sock:/var/run/docker.sock
-    ports:
-      - 27017:27017
-
-  postgresql:
-    image: postgres:latest
-    container_name: postgresql
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgresql
-      POSTGRES_PASSWORD: postgresql
-      PGDATA: /data/postgres
-    volumes:
-      - /Users/thiagovulcao/docker/compose/postgresql/data/docker.sock:/var/run/docker.sock
-
-  neo4j:
-    image: neo4j:latest
-    container_name: neo4j
-    network_mode: bridge
-    ports:
-      - "7474:7474"
-      - "7687:7687"
-    volumes:
-      - /Users/thiagovulcao/docker/compose/neo4j/data/docker.sock:/data
-      - /Users/thiagovulcao/docker/compose/neo4j/plugin/docker.sock:/plugin
-      - /Users/thiagovulcao/docker/compose/neo4j/import/docker.sock:/import
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1
-    container_name: elasticsearch
-    ports:
-      - 9200:9200
-      - 9300:9300
+#    volumes:
+#      - /Users/thiagovulcao/docker/compose/kafka/data/docker.sock:/var/run/docker.sock

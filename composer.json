@@ -1,24 +1,13 @@
 {
     "name": "picpay/enqueue",
-    "description": "Library to support Kafka service",
-    "keywords": ["framework", "laravel", "laravel zero", "console", "cli"],
-    "homepage": "https://laravel-zero.com",
     "type": "project",
-    "license": "MIT",
-    "support": {
-        "issues": "https://github.com/laravel-zero/laravel-zero/issues",
-        "source": "https://github.com/laravel-zero/laravel-zero"
-    },
-    "authors": [
-        {
-            "name": "Nuno Maduro",
-            "email": "enunomaduro@gmail.com"
-        }
-    ],
+    "license": "mit",
+    "minimum-stability": "dev",
     "require": {
         "php": "^7.1",
         "ext-json": "*",
-        "enqueue/rdkafka": "0.8.42"
+        "enqueue/rdkafka": "0.8.42",
+        "queue-interop/queue-interop": "0.6.2"
     },
     "require-dev": {
         "mockery/mockery": "^1.0",
@@ -33,13 +22,5 @@
         "psr-4": {
             "Tests\\": "tests/"
         }
-    },
-    "config": {
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "optimize-autoloader": true
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "bin": ["bin/console"]
+    }
 }
