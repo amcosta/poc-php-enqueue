@@ -1,10 +1,25 @@
 <?php
 
+use Enqueue\RdKafka\RdKafkaConnectionFactory;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
+
 require __DIR__ . "/../vendor/autoload.php";
 
-$client = \PicPay\Enqueue\Broker\Factory::create('kafka', new \PicPay\Enqueue\Broker\Configuration('kafka1', '9092'));
+$conn = new RdKafkaConnectionFactory([
+    'global' => [
+        'group.id' => 'php-enqueue',
+        'metadata.broker.list' => 'kafka1:9092',
+        'enable.auto.commit' => 'false',
+    ]
+]);
 
-do {
-    $message = $client->receive('primeiro-topico');
-    var_dump($message);
-} while (true);
+$topicName = 'primeiro-topico';
+
+$context = $conn->createContext();
+$topic = $context->createTopic($topicName);
+$consumer = $context->createConsumer($topic);
+
+$queueConsumer = new \Enqueue\Consumption\QueueConsumer($context);
+$queueConsumer->bind($topic, new \PicPay\Enqueue\Listener\GenericTopic\GenericTopicProcessor());
+$queueConsumer->consume();

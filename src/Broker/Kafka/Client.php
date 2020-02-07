@@ -4,6 +4,9 @@
 namespace PicPay\Enqueue\Broker\Kafka;
 
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Producer;
 use PicPay\Enqueue\Broker\ClientInterface;
 use PicPay\Enqueue\Broker\Configuration;
 
@@ -42,5 +45,21 @@ class Client implements ClientInterface
     {
         $context = $this->client->createContext();
         $context->createConsumer($context->createTopic($destination))->acknowledge($message);
+    }
+
+    public function getConsumer(string $destination): Consumer
+    {
+        $context = $this->client->createContext();
+        return $context->createConsumer($context->createTopic($destination));
+    }
+
+    public function getProducer(): Producer
+    {
+        return $this->client->createContext()->createProducer();
+    }
+
+    public function getContext(): Context
+    {
+        return $this->client->createContext();
     }
 }

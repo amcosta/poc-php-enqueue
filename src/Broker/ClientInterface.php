@@ -3,7 +3,15 @@
 
 namespace PicPay\Enqueue\Broker;
 
-interface ClientInterface extends ProducerInterface, ConsumerInterface
-{
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Producer;
 
+interface ClientInterface extends ConsumerInterface, ProducerInterface
+{
+    public function getContext(): Context;
+
+    public function getConsumer(string $destination): Consumer;
+
+    public function getProducer(): Producer;
 }
