@@ -6,8 +6,8 @@
     "require": {
         "php": "^7.1",
         "ext-json": "*",
-        "enqueue/rdkafka": "0.8.42",
-        "queue-interop/queue-interop": "0.6.2"
+        "enqueue/enqueue": "^0.10.0@dev",
+        "enqueue/rdkafka": "^0.10.0@dev"
     },
     "require-dev": {
         "mockery/mockery": "^1.0",
