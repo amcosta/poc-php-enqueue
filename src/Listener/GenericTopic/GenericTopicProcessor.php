@@ -21,7 +21,7 @@ class GenericTopicProcessor implements Processor
         $body = json_decode($message->getBody(), true);
         echo $message->getBody();
 
-        throw new DqlException('qualquer coisa');
+//        throw new RetryException('qualquer coisa');
 
 //        if (!array_key_exists('_id', $body)) {
 //            echo ' - Reject' . PHP_EOL;
