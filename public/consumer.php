@@ -16,4 +16,3 @@ require __DIR__ . "/../vendor/autoload.php";
         new DlqExtension('primeiro-topico-dlq')
     ])
 );
-
