@@ -34,7 +34,7 @@ services:
       - "9092:9092"
       - "1099:1099"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: 10.11.56.40
+      KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_BROKER_ID: 1
       KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote.rmi.port=1099"

@@ -1,8 +1,6 @@
 <?php
 
 use Enqueue\RdKafka\RdKafkaConnectionFactory;
-use Interop\Queue\Message;
-use Interop\Queue\Processor;
 
 require __DIR__ . "/../vendor/autoload.php";
 
@@ -20,6 +18,12 @@ $context = $conn->createContext();
 $topic = $context->createTopic($topicName);
 $consumer = $context->createConsumer($topic);
 
-$queueConsumer = new \Enqueue\Consumption\QueueConsumer($context);
+$queueConsumer = new \Enqueue\Consumption\QueueConsumer(
+    $context,
+    new \Enqueue\Consumption\ChainExtension([
+        new \PicPay\Enqueue\Broker\Extensions\RetryExtension(3, 5),
+        new \PicPay\Enqueue\Broker\Extensions\DlqExtension('primeiro-topico-dlq')
+    ])
+);
 $queueConsumer->bind($topic, new \PicPay\Enqueue\Listener\GenericTopic\GenericTopicProcessor());
 $queueConsumer->consume();

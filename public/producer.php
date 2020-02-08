@@ -23,7 +23,12 @@ $topicName = 'primeiro-topico';
 
 $context = $conn->createContext();
 $topic = $context->createTopic($topicName);
-$message = $context->createMessage(json_encode(['_id' => uniqid(), 'payload' => 'Picpay', 'requeue' => true]));
+$message = $context->createMessage(json_encode([
+    '_id' => uniqid(),
+    'payload' => 'Picpay',
+    'exception' => false,
+    'requeue' => false
+]));
 
 //for ($i = 1; $i <= 100; $i++) {
     $context->createProducer()->send($topic, $message);
