@@ -8,7 +8,7 @@ use PicPay\Enqueue\Listener\GenericTopic\GenericTopicProcessor;
 
 require __DIR__ . "/../vendor/autoload.php";
 
-(new Consumer('kafka://kafka1:9092'))->consume(
+(new Consumer('kafka1:9092', $argv[1]))->consume(
     'primeiro-topico',
     new GenericTopicProcessor(),
     new ChainExtension([
