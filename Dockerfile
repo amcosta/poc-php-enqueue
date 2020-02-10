@@ -10,8 +10,9 @@ RUN docker-php-ext-install zip
 
 RUN cd /tmp
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
-RUN pecl install rdkafka-3.1.3 && docker-php-ext-enable rdkafka
+RUN pecl install rdkafka-3.1.3 xdebug && docker-php-ext-enable rdkafka xdebug
 
+COPY ./docker/etc/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+COPY ./docker/etc/php.ini /usr/local/etc/php/php.ini
 
 WORKDIR /var/www/poc-enqueue
-#COPY ./docker/etc/php.ini /usr/local/etc/php/php.ini
