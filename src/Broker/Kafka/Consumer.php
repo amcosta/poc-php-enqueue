@@ -37,10 +37,8 @@ class Consumer extends Client implements ConsumerInterface
         return new RdKafkaConnectionFactory([
             'global' => [
                 'group.id' => $this->groupId,
-                'metadata.broker.list' => $this->dsn
-            ],
-            'topic' => [
-                'auto.offset.reset' => 'end',
+                'metadata.broker.list' => $this->dsn,
+                'offset.store.method' => 'broker'
             ]
         ]);
     }
