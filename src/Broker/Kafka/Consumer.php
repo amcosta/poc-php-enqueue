@@ -21,6 +21,9 @@ class Consumer extends Client implements ConsumerInterface
         $this->groupId = $groupId;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function consume(string $destination, Processor $processor, ExtensionInterface $extension = null)
     {
         $context = $this->buildClient($destination)->createContext();
@@ -33,8 +36,11 @@ class Consumer extends Client implements ConsumerInterface
     {
         return new RdKafkaConnectionFactory([
             'global' => [
-                'group.id' => 'g2',
+                'group.id' => $this->groupId,
                 'metadata.broker.list' => $this->dsn
+            ],
+            'topic' => [
+                'auto.offset.reset' => 'end',
             ]
         ]);
     }
