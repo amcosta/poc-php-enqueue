@@ -18,7 +18,7 @@ use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\Result;
 use PicPay\Enqueue\Broker\Exceptions\RetryException;
 
-class RetryExtension implements ExtensionInterface
+class RetryDlqExtension implements ExtensionInterface
 {
     /**
      * @var int
@@ -30,10 +30,16 @@ class RetryExtension implements ExtensionInterface
      */
     private $attempts;
 
-    public function __construct(int $attempts = 1, int $interval = 0)
+    /**
+     * @var string
+     */
+    private $dqlTopic;
+
+    public function __construct(int $attempts = 1, int $interval = 0, string $dlqTopic = null)
     {
         $this->attempts = $attempts;;
         $this->interval = $interval;
+        $this->dqlTopic = $dlqTopic;
     }
 
     /**
@@ -105,10 +111,6 @@ class RetryExtension implements ExtensionInterface
      */
     public function onProcessorException(ProcessorException $handler): void
     {
-        if (!$handler->getException() instanceof RetryException) {
-            return;
-        }
-
         if ($this->attempts < 1) {
             return;
         }
@@ -118,6 +120,7 @@ class RetryExtension implements ExtensionInterface
         echo 'Tentativa: ' . $currentAttempt . PHP_EOL;
 
         if ($currentAttempt > $this->attempts) {
+            $this->moveToDql($handler);
             $handler->setResult(Result::reject($handler->getException()->getMessage()));
             return;
         }
@@ -133,5 +136,18 @@ class RetryExtension implements ExtensionInterface
     public function onStart(Start $context): void
     {
         // TODO: Implement onStart() method.
+    }
+
+    private function moveToDql(ProcessorException $handler)
+    {
+        if ($this->dqlTopic === null) {
+            return;
+        }
+
+        $context = $handler->getContext();
+        $context->createProducer()->send(
+            $context->createTopic($this->dqlTopic),
+            $handler->getMessage()
+        );
     }
 }

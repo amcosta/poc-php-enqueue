@@ -15,27 +15,16 @@ services:
       - XDEBUG_REMOTE_HOST=172.17.0.1
       - XDEBUG_REMOTE_PORT=9009
       - XDEBUG_IDEKEY=xdebug-enqueue
-
-  app2:
-    build:
-      context: .
-      args:
-        COMPOSER_AUTH: ${COMPOSER_AUTH}
-    image: "poc-enqueue-php:latest"
-    container_name: poc-enqueue-php-2
-    volumes:
-      - .:/var/www/poc-enqueue
-    tty: true
-    environment:
-      - XDEBUG_REMOTE_HOST=172.17.0.1
-      - XDEBUG_REMOTE_PORT=9009
-      - XDEBUG_IDEKEY=xdebug-enqueue
+    networks:
+      - bubble
 
   zookeeper:
     image: wurstmeister/zookeeper:latest
     container_name: poc-enqueue-zookeeper
     ports:
       - "2181:2181"
+    networks:
+      - bubble
 
   kafka-manager:
     image: hlebalbau/kafka-manager
@@ -45,6 +34,8 @@ services:
     environment:
       APPLICATION_SECRET: letmein
       ZK_HOSTS:  zookeeper:2181
+    networks:
+      - bubble
 
   kafka1:
     image: wurstmeister/kafka:latest
@@ -53,23 +44,31 @@ services:
       - "9092:9092"
       - "1099:1099"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
+      KAFKA_ADVERTISED_HOST_NAME: 10.11.56.1
       KAFKA_PORT: 9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_BROKER_ID: 1
       KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote.rmi.port=1099"
       JMX_PORT: 1099
+    networks:
+      - bubble
 
-  kafka2:
-    image: wurstmeister/kafka:latest
-    container_name: poc-enqueue-kafka2
-    ports:
-      - "9098:9098"
-      - "1100:1100"
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME:  172.17.0.1
-      KAFKA_PORT: 9098
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_BROKER_ID: 2
-      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote.rmi.port=1100"
-      JMX_PORT: 1100
+#  kafka2:
+#    image: wurstmeister/kafka:latest
+#    container_name: poc-enqueue-kafka2
+#    ports:
+#      - "9098:9098"
+#      - "1100:1100"
+#    environment:
+#      KAFKA_ADVERTISED_HOST_NAME: 10.11.56.21
+#      KAFKA_PORT: 9098
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_BROKER_ID: 2
+#      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote.rmi.port=1100"
+#      JMX_PORT: 1100
+#    networks:
+#      - bubble
+
+networks:
+  bubble:
+    external: true

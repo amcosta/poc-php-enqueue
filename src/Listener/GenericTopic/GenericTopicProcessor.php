@@ -1,8 +1,6 @@
 <?php
 
-
 namespace PicPay\Enqueue\Listener\GenericTopic;
-
 
 use Interop\Queue\Context;
 use Interop\Queue\Message;
@@ -18,16 +16,35 @@ class GenericTopicProcessor implements Processor
      */
     public function process(Message $message, Context $context)
     {
+        $payload = json_decode($message->getBody(), true);
+        $magicNumber = $payload['execution_time'];
+
         $info = [
             'message_id' => $message->getMessageId(),
-            'headers' => $message->getHeaders(),
-            'payload' => json_decode($message->getBody(), true)
+            'random_number' => $magicNumber
         ];
 
-//        throw new RetryException('qualquer coisa');
-//        throw new DqlException('qualquer coisa');
+        if ($magicNumber > 23) {
+            $info['exception'] = DqlException::class;
+            $this->print($info);
+            throw new DqlException('Mensgaem movida para a DLQ');
+        }
 
-        echo $message->getMessageId() . ' - Ack' . PHP_EOL;
+        if ($magicNumber < 5) {
+            $info['exception'] = RetryException::class;
+            $this->print($info);
+            throw new RetryException('Houve um problema, vamos tentar mais uma vez!');
+        }
+
+        $this->print($info);
+        sleep($magicNumber);
         return Processor::ACK;
+    }
+
+    private function print($msg)
+    {
+        $string = json_encode($msg, JSON_PRETTY_PRINT);
+        $string.= PHP_EOL;
+        fwrite(STDOUT, $string);
     }
 }
